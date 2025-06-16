@@ -1,0 +1,1604 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="data/BatasKecamatanSidoarjo_1.js"></script>
+        <script src="data/UTM_JALAN_2.js"></script>
+        <script src="data/jalan_lokal_3.js"></script>
+        <script src="data/AksesibilitasDariFasilitasKesehatan_4.js"></script>
+        <script src="data/HotspotTingkatKerawananBalapMotorLiar_5.js"></script>
+        <script src="data/DaftarFasilitasKeamanandiKabupatenSidoarjo_6.js"></script>
+        <script src="data/DaftarFasilitasPendidikandiKabupatenSidoarjo_7.js"></script>
+        <script src="data/DaftarFasilitasKesehatandiKabupatenSidoarjo_8.js"></script>
+        <script src="data/DaftarSPBUdiKabupatenSidoarjo_9.js"></script>
+        <script src="data/FasilitasPendidikanDekatLokasiBalapMotorLiar_10.js"></script>
+        <script src="data/FasilitasKeamananDekatLokasiBalapMotorLiar_11.js"></script>
+        <script src="data/FasilitasKesehatanDekatLokasiBalapMotorLiar_12.js"></script>
+        <script src="data/SPBUDekatLokasiBalapMotorLiar_13.js"></script>
+        <script src="data/LokasiBalapMotorLiardiKabupatenSidoarjo_14.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+            highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[-7.52118697448911,112.18307482554307],[-7.113650697460051,112.89075166451276]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_GoogleRoad_0');
+        map.getPane('pane_GoogleRoad_0').style.zIndex = 400;
+        var layer_GoogleRoad_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleRoad_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.google.at/permissions/geoguidelines/attr-guide.html">Map data ©2015 Google</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_GoogleRoad_0;
+        map.addLayer(layer_GoogleRoad_0);
+        function pop_BatasKecamatanSidoarjo_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(String(feature.properties['OBJECTID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['METADATA'] !== null ? autolinker.link(String(feature.properties['METADATA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SRS_ID'] !== null ? autolinker.link(String(feature.properties['SRS_ID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['WADMKC'] !== null ? autolinker.link(String(feature.properties['WADMKC']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['WADMKK'] !== null ? autolinker.link(String(feature.properties['WADMKK']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['WADMPR'] !== null ? autolinker.link(String(feature.properties['WADMPR']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['UUPP'] !== null ? autolinker.link(String(feature.properties['UUPP']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_BatasKecamatanSidoarjo_1_0() {
+            return {
+                pane: 'pane_BatasKecamatanSidoarjo_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,136,45,1.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_BatasKecamatanSidoarjo_1');
+        map.getPane('pane_BatasKecamatanSidoarjo_1').style.zIndex = 401;
+        map.getPane('pane_BatasKecamatanSidoarjo_1').style['mix-blend-mode'] = 'normal';
+        var layer_BatasKecamatanSidoarjo_1 = new L.geoJson(json_BatasKecamatanSidoarjo_1, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_BatasKecamatanSidoarjo_1',
+            layerName: 'layer_BatasKecamatanSidoarjo_1',
+            pane: 'pane_BatasKecamatanSidoarjo_1',
+            onEachFeature: pop_BatasKecamatanSidoarjo_1,
+            style: style_BatasKecamatanSidoarjo_1_0,
+        });
+        bounds_group.addLayer(layer_BatasKecamatanSidoarjo_1);
+        map.addLayer(layer_BatasKecamatanSidoarjo_1);
+        function pop_UTM_JALAN_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAMRJL'] !== null ? autolinker.link(String(feature.properties['NAMRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['KONRJL'] !== null ? autolinker.link(String(feature.properties['KONRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MATRJL'] !== null ? autolinker.link(String(feature.properties['MATRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FGSRJL'] !== null ? autolinker.link(String(feature.properties['FGSRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['UTKRJL'] !== null ? autolinker.link(String(feature.properties['UTKRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TOLRJL'] !== null ? autolinker.link(String(feature.properties['TOLRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['WLYRJL'] !== null ? autolinker.link(String(feature.properties['WLYRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['AUTRJL'] !== null ? autolinker.link(String(feature.properties['AUTRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['KLSRJL'] !== null ? autolinker.link(String(feature.properties['KLSRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SPCRJL'] !== null ? autolinker.link(String(feature.properties['SPCRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['JPARJL'] !== null ? autolinker.link(String(feature.properties['JPARJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ARHRJL'] !== null ? autolinker.link(String(feature.properties['ARHRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['STARJL'] !== null ? autolinker.link(String(feature.properties['STARJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['KLLRJL'] !== null ? autolinker.link(String(feature.properties['KLLRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MEDRJL'] !== null ? autolinker.link(String(feature.properties['MEDRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LOCRJL'] !== null ? autolinker.link(String(feature.properties['LOCRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['JARRJL'] !== null ? autolinker.link(String(feature.properties['JARRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FCODE'] !== null ? autolinker.link(String(feature.properties['FCODE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['REMARK'] !== null ? autolinker.link(String(feature.properties['REMARK']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SRS_ID'] !== null ? autolinker.link(String(feature.properties['SRS_ID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LCODE'] !== null ? autolinker.link(String(feature.properties['LCODE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['METADATA'] !== null ? autolinker.link(String(feature.properties['METADATA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SHAPE_Leng'] !== null ? autolinker.link(String(feature.properties['SHAPE_Leng']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['time_trave'] !== null ? autolinker.link(String(feature.properties['time_trave']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['scl_shape'] !== null ? autolinker.link(String(feature.properties['scl_shape']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID'] !== null ? autolinker.link(String(feature.properties['ID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_UTM_JALAN_2_0() {
+            return {
+                pane: 'pane_UTM_JALAN_2',
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_UTM_JALAN_2');
+        map.getPane('pane_UTM_JALAN_2').style.zIndex = 402;
+        map.getPane('pane_UTM_JALAN_2').style['mix-blend-mode'] = 'normal';
+        var layer_UTM_JALAN_2 = new L.geoJson(json_UTM_JALAN_2, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_UTM_JALAN_2',
+            layerName: 'layer_UTM_JALAN_2',
+            pane: 'pane_UTM_JALAN_2',
+            onEachFeature: pop_UTM_JALAN_2,
+            style: style_UTM_JALAN_2_0,
+        });
+        bounds_group.addLayer(layer_UTM_JALAN_2);
+        map.addLayer(layer_UTM_JALAN_2);
+        function pop_jalan_lokal_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAMRJL'] !== null ? autolinker.link(String(feature.properties['NAMRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['KONRJL'] !== null ? autolinker.link(String(feature.properties['KONRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MATRJL'] !== null ? autolinker.link(String(feature.properties['MATRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FGSRJL'] !== null ? autolinker.link(String(feature.properties['FGSRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['UTKRJL'] !== null ? autolinker.link(String(feature.properties['UTKRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TOLRJL'] !== null ? autolinker.link(String(feature.properties['TOLRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['WLYRJL'] !== null ? autolinker.link(String(feature.properties['WLYRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['AUTRJL'] !== null ? autolinker.link(String(feature.properties['AUTRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['KLSRJL'] !== null ? autolinker.link(String(feature.properties['KLSRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SPCRJL'] !== null ? autolinker.link(String(feature.properties['SPCRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['JPARJL'] !== null ? autolinker.link(String(feature.properties['JPARJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ARHRJL'] !== null ? autolinker.link(String(feature.properties['ARHRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['STARJL'] !== null ? autolinker.link(String(feature.properties['STARJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['KLLRJL'] !== null ? autolinker.link(String(feature.properties['KLLRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MEDRJL'] !== null ? autolinker.link(String(feature.properties['MEDRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LOCRJL'] !== null ? autolinker.link(String(feature.properties['LOCRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['JARRJL'] !== null ? autolinker.link(String(feature.properties['JARRJL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FCODE'] !== null ? autolinker.link(String(feature.properties['FCODE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['REMARK'] !== null ? autolinker.link(String(feature.properties['REMARK']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SRS_ID'] !== null ? autolinker.link(String(feature.properties['SRS_ID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LCODE'] !== null ? autolinker.link(String(feature.properties['LCODE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['METADATA'] !== null ? autolinker.link(String(feature.properties['METADATA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SHAPE_Leng'] !== null ? autolinker.link(String(feature.properties['SHAPE_Leng']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['time_trave'] !== null ? autolinker.link(String(feature.properties['time_trave']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['scl_shape'] !== null ? autolinker.link(String(feature.properties['scl_shape']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID'] !== null ? autolinker.link(String(feature.properties['ID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_jalan_lokal_3_0() {
+            return {
+                pane: 'pane_jalan_lokal_3',
+                opacity: 1,
+                color: 'rgba(183,72,75,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_jalan_lokal_3');
+        map.getPane('pane_jalan_lokal_3').style.zIndex = 403;
+        map.getPane('pane_jalan_lokal_3').style['mix-blend-mode'] = 'normal';
+        var layer_jalan_lokal_3 = new L.geoJson(json_jalan_lokal_3, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_jalan_lokal_3',
+            layerName: 'layer_jalan_lokal_3',
+            pane: 'pane_jalan_lokal_3',
+            onEachFeature: pop_jalan_lokal_3,
+            style: style_jalan_lokal_3_0,
+        });
+        bounds_group.addLayer(layer_jalan_lokal_3);
+        map.addLayer(layer_jalan_lokal_3);
+        function pop_AksesibilitasDariFasilitasKesehatan_4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Aksesibili'] !== null ? autolinker.link(String(feature.properties['Aksesibili']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_AksesibilitasDariFasilitasKesehatan_4_0(feature) {
+            if (feature.properties['Aksesibili'] >= 1.000000 && feature.properties['Aksesibili'] <= 1.000000 ) {
+                return {
+                pane: 'pane_AksesibilitasDariFasilitasKesehatan_4',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,25,28,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Aksesibili'] >= 1.000000 && feature.properties['Aksesibili'] <= 2.000000 ) {
+                return {
+                pane: 'pane_AksesibilitasDariFasilitasKesehatan_4',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,201,128,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Aksesibili'] >= 2.000000 && feature.properties['Aksesibili'] <= 3.000000 ) {
+                return {
+                pane: 'pane_AksesibilitasDariFasilitasKesehatan_4',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(199,232,173,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Aksesibili'] >= 3.000000 && feature.properties['Aksesibili'] <= 4.000000 ) {
+                return {
+                pane: 'pane_AksesibilitasDariFasilitasKesehatan_4',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(43,131,186,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_AksesibilitasDariFasilitasKesehatan_4');
+        map.getPane('pane_AksesibilitasDariFasilitasKesehatan_4').style.zIndex = 404;
+        map.getPane('pane_AksesibilitasDariFasilitasKesehatan_4').style['mix-blend-mode'] = 'normal';
+        var layer_AksesibilitasDariFasilitasKesehatan_4 = new L.geoJson(json_AksesibilitasDariFasilitasKesehatan_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_AksesibilitasDariFasilitasKesehatan_4',
+            layerName: 'layer_AksesibilitasDariFasilitasKesehatan_4',
+            pane: 'pane_AksesibilitasDariFasilitasKesehatan_4',
+            onEachFeature: pop_AksesibilitasDariFasilitasKesehatan_4,
+            style: style_AksesibilitasDariFasilitasKesehatan_4_0,
+        });
+        bounds_group.addLayer(layer_AksesibilitasDariFasilitasKesehatan_4);
+        map.addLayer(layer_AksesibilitasDariFasilitasKesehatan_4);
+        function pop_HotspotTingkatKerawananBalapMotorLiar_5(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Tingkat Ke'] !== null ? autolinker.link(String(feature.properties['Tingkat Ke']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_HotspotTingkatKerawananBalapMotorLiar_5_0(feature) {
+            if (feature.properties['Tingkat Ke'] >= 1.000000 && feature.properties['Tingkat Ke'] <= 1.000000 ) {
+                return {
+                pane: 'pane_HotspotTingkatKerawananBalapMotorLiar_5',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,245,240,0.4231372549019608)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Tingkat Ke'] >= 1.000000 && feature.properties['Tingkat Ke'] <= 2.000000 ) {
+                return {
+                pane: 'pane_HotspotTingkatKerawananBalapMotorLiar_5',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(252,190,165,0.4231372549019608)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Tingkat Ke'] >= 2.000000 && feature.properties['Tingkat Ke'] <= 3.000000 ) {
+                return {
+                pane: 'pane_HotspotTingkatKerawananBalapMotorLiar_5',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(251,112,80,0.39)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Tingkat Ke'] >= 3.000000 && feature.properties['Tingkat Ke'] <= 4.000000 ) {
+                return {
+                pane: 'pane_HotspotTingkatKerawananBalapMotorLiar_5',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(211,32,32,0.65)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Tingkat Ke'] >= 4.000000 && feature.properties['Tingkat Ke'] <= 5.000000 ) {
+                return {
+                pane: 'pane_HotspotTingkatKerawananBalapMotorLiar_5',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(103,0,13,0.65)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_HotspotTingkatKerawananBalapMotorLiar_5');
+        map.getPane('pane_HotspotTingkatKerawananBalapMotorLiar_5').style.zIndex = 405;
+        map.getPane('pane_HotspotTingkatKerawananBalapMotorLiar_5').style['mix-blend-mode'] = 'normal';
+        var layer_HotspotTingkatKerawananBalapMotorLiar_5 = new L.geoJson(json_HotspotTingkatKerawananBalapMotorLiar_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_HotspotTingkatKerawananBalapMotorLiar_5',
+            layerName: 'layer_HotspotTingkatKerawananBalapMotorLiar_5',
+            pane: 'pane_HotspotTingkatKerawananBalapMotorLiar_5',
+            onEachFeature: pop_HotspotTingkatKerawananBalapMotorLiar_5,
+            style: style_HotspotTingkatKerawananBalapMotorLiar_5_0,
+        });
+        bounds_group.addLayer(layer_HotspotTingkatKerawananBalapMotorLiar_5);
+        map.addLayer(layer_HotspotTingkatKerawananBalapMotorLiar_5);
+        function pop_DaftarFasilitasKeamanandiKabupatenSidoarjo_6(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Fasilitas'] !== null ? autolinker.link(String(feature.properties['Fasilitas']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Lat'] !== null ? autolinker.link(String(feature.properties['Lat']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Long'] !== null ? autolinker.link(String(feature.properties['Long']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_DaftarFasilitasKeamanandiKabupatenSidoarjo_6_0() {
+            return {
+                pane: 'pane_DaftarFasilitasKeamanandiKabupatenSidoarjo_6',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/DaftarFasilitasKeamanandiKabupatenSidoarjo_6.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_DaftarFasilitasKeamanandiKabupatenSidoarjo_6');
+        map.getPane('pane_DaftarFasilitasKeamanandiKabupatenSidoarjo_6').style.zIndex = 406;
+        map.getPane('pane_DaftarFasilitasKeamanandiKabupatenSidoarjo_6').style['mix-blend-mode'] = 'normal';
+        var layer_DaftarFasilitasKeamanandiKabupatenSidoarjo_6 = new L.geoJson(json_DaftarFasilitasKeamanandiKabupatenSidoarjo_6, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_DaftarFasilitasKeamanandiKabupatenSidoarjo_6',
+            layerName: 'layer_DaftarFasilitasKeamanandiKabupatenSidoarjo_6',
+            pane: 'pane_DaftarFasilitasKeamanandiKabupatenSidoarjo_6',
+            onEachFeature: pop_DaftarFasilitasKeamanandiKabupatenSidoarjo_6,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_DaftarFasilitasKeamanandiKabupatenSidoarjo_6_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_DaftarFasilitasKeamanandiKabupatenSidoarjo_6);
+        map.addLayer(layer_DaftarFasilitasKeamanandiKabupatenSidoarjo_6);
+        function pop_DaftarFasilitasPendidikandiKabupatenSidoarjo_7(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Fasilitas'] !== null ? autolinker.link(String(feature.properties['Fasilitas']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Lat'] !== null ? autolinker.link(String(feature.properties['Lat']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Long'] !== null ? autolinker.link(String(feature.properties['Long']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_DaftarFasilitasPendidikandiKabupatenSidoarjo_7_0() {
+            return {
+                pane: 'pane_DaftarFasilitasPendidikandiKabupatenSidoarjo_7',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/DaftarFasilitasPendidikandiKabupatenSidoarjo_7.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_DaftarFasilitasPendidikandiKabupatenSidoarjo_7');
+        map.getPane('pane_DaftarFasilitasPendidikandiKabupatenSidoarjo_7').style.zIndex = 407;
+        map.getPane('pane_DaftarFasilitasPendidikandiKabupatenSidoarjo_7').style['mix-blend-mode'] = 'normal';
+        var layer_DaftarFasilitasPendidikandiKabupatenSidoarjo_7 = new L.geoJson(json_DaftarFasilitasPendidikandiKabupatenSidoarjo_7, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_DaftarFasilitasPendidikandiKabupatenSidoarjo_7',
+            layerName: 'layer_DaftarFasilitasPendidikandiKabupatenSidoarjo_7',
+            pane: 'pane_DaftarFasilitasPendidikandiKabupatenSidoarjo_7',
+            onEachFeature: pop_DaftarFasilitasPendidikandiKabupatenSidoarjo_7,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_DaftarFasilitasPendidikandiKabupatenSidoarjo_7_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_DaftarFasilitasPendidikandiKabupatenSidoarjo_7);
+        map.addLayer(layer_DaftarFasilitasPendidikandiKabupatenSidoarjo_7);
+        function pop_DaftarFasilitasKesehatandiKabupatenSidoarjo_8(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Nama Faske'] !== null ? autolinker.link(String(feature.properties['Nama Faske']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Lat'] !== null ? autolinker.link(String(feature.properties['Lat']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Long'] !== null ? autolinker.link(String(feature.properties['Long']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_DaftarFasilitasKesehatandiKabupatenSidoarjo_8_0() {
+            return {
+                pane: 'pane_DaftarFasilitasKesehatandiKabupatenSidoarjo_8',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/DaftarFasilitasKesehatandiKabupatenSidoarjo_8.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_DaftarFasilitasKesehatandiKabupatenSidoarjo_8');
+        map.getPane('pane_DaftarFasilitasKesehatandiKabupatenSidoarjo_8').style.zIndex = 408;
+        map.getPane('pane_DaftarFasilitasKesehatandiKabupatenSidoarjo_8').style['mix-blend-mode'] = 'normal';
+        var layer_DaftarFasilitasKesehatandiKabupatenSidoarjo_8 = new L.geoJson(json_DaftarFasilitasKesehatandiKabupatenSidoarjo_8, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_DaftarFasilitasKesehatandiKabupatenSidoarjo_8',
+            layerName: 'layer_DaftarFasilitasKesehatandiKabupatenSidoarjo_8',
+            pane: 'pane_DaftarFasilitasKesehatandiKabupatenSidoarjo_8',
+            onEachFeature: pop_DaftarFasilitasKesehatandiKabupatenSidoarjo_8,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_DaftarFasilitasKesehatandiKabupatenSidoarjo_8_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_DaftarFasilitasKesehatandiKabupatenSidoarjo_8);
+        map.addLayer(layer_DaftarFasilitasKesehatandiKabupatenSidoarjo_8);
+        function pop_DaftarSPBUdiKabupatenSidoarjo_9(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Nama Pom B'] !== null ? autolinker.link(String(feature.properties['Nama Pom B']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Lat'] !== null ? autolinker.link(String(feature.properties['Lat']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Long'] !== null ? autolinker.link(String(feature.properties['Long']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_DaftarSPBUdiKabupatenSidoarjo_9_0() {
+            return {
+                pane: 'pane_DaftarSPBUdiKabupatenSidoarjo_9',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/DaftarSPBUdiKabupatenSidoarjo_9.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_DaftarSPBUdiKabupatenSidoarjo_9');
+        map.getPane('pane_DaftarSPBUdiKabupatenSidoarjo_9').style.zIndex = 409;
+        map.getPane('pane_DaftarSPBUdiKabupatenSidoarjo_9').style['mix-blend-mode'] = 'normal';
+        var layer_DaftarSPBUdiKabupatenSidoarjo_9 = new L.geoJson(json_DaftarSPBUdiKabupatenSidoarjo_9, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_DaftarSPBUdiKabupatenSidoarjo_9',
+            layerName: 'layer_DaftarSPBUdiKabupatenSidoarjo_9',
+            pane: 'pane_DaftarSPBUdiKabupatenSidoarjo_9',
+            onEachFeature: pop_DaftarSPBUdiKabupatenSidoarjo_9,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_DaftarSPBUdiKabupatenSidoarjo_9_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_DaftarSPBUdiKabupatenSidoarjo_9);
+        map.addLayer(layer_DaftarSPBUdiKabupatenSidoarjo_9);
+        function pop_FasilitasPendidikanDekatLokasiBalapMotorLiar_10(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Fasilitas'] !== null ? autolinker.link(String(feature.properties['Fasilitas']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Lat'] !== null ? autolinker.link(String(feature.properties['Lat']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Long'] !== null ? autolinker.link(String(feature.properties['Long']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TINGKATAN'] !== null ? autolinker.link(String(feature.properties['TINGKATAN']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_FasilitasPendidikanDekatLokasiBalapMotorLiar_10_0(feature) {
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 0.000000 && feature.properties['q2wHide_NEAR_DIST'] <= 198.391475 ) {
+                return {
+                pane: 'pane_FasilitasPendidikanDekatLokasiBalapMotorLiar_10',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/FasilitasPendidikanDekatLokasiBalapMotorLiar_10.svg',
+            iconSize: [38.0, 38.0]
+        }),
+                interactive: true,
+            }
+            }
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 198.391475 && feature.properties['q2wHide_NEAR_DIST'] <= 755.624096 ) {
+                return {
+                pane: 'pane_FasilitasPendidikanDekatLokasiBalapMotorLiar_10',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/FasilitasPendidikanDekatLokasiBalapMotorLiar_10.svg',
+            iconSize: [30.4, 30.4]
+        }),
+                interactive: true,
+            }
+            }
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 755.624096 && feature.properties['q2wHide_NEAR_DIST'] <= 1396.479914 ) {
+                return {
+                pane: 'pane_FasilitasPendidikanDekatLokasiBalapMotorLiar_10',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/FasilitasPendidikanDekatLokasiBalapMotorLiar_10.svg',
+            iconSize: [22.799999999999997, 22.799999999999997]
+        }),
+                interactive: true,
+            }
+            }
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 1396.479914 && feature.properties['q2wHide_NEAR_DIST'] <= 2338.921803 ) {
+                return {
+                pane: 'pane_FasilitasPendidikanDekatLokasiBalapMotorLiar_10',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/FasilitasPendidikanDekatLokasiBalapMotorLiar_10.svg',
+            iconSize: [15.2, 15.2]
+        }),
+                interactive: true,
+            }
+            }
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 2338.921803 && feature.properties['q2wHide_NEAR_DIST'] <= 3006.391257 ) {
+                return {
+                pane: 'pane_FasilitasPendidikanDekatLokasiBalapMotorLiar_10',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/FasilitasPendidikanDekatLokasiBalapMotorLiar_10.svg',
+            iconSize: [9.5, 9.5]
+        }),
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_FasilitasPendidikanDekatLokasiBalapMotorLiar_10');
+        map.getPane('pane_FasilitasPendidikanDekatLokasiBalapMotorLiar_10').style.zIndex = 410;
+        map.getPane('pane_FasilitasPendidikanDekatLokasiBalapMotorLiar_10').style['mix-blend-mode'] = 'normal';
+        var layer_FasilitasPendidikanDekatLokasiBalapMotorLiar_10 = new L.geoJson(json_FasilitasPendidikanDekatLokasiBalapMotorLiar_10, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_FasilitasPendidikanDekatLokasiBalapMotorLiar_10',
+            layerName: 'layer_FasilitasPendidikanDekatLokasiBalapMotorLiar_10',
+            pane: 'pane_FasilitasPendidikanDekatLokasiBalapMotorLiar_10',
+            onEachFeature: pop_FasilitasPendidikanDekatLokasiBalapMotorLiar_10,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_FasilitasPendidikanDekatLokasiBalapMotorLiar_10_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_FasilitasPendidikanDekatLokasiBalapMotorLiar_10);
+        map.addLayer(layer_FasilitasPendidikanDekatLokasiBalapMotorLiar_10);
+        function pop_FasilitasKeamananDekatLokasiBalapMotorLiar_11(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Fasilitas'] !== null ? autolinker.link(String(feature.properties['Fasilitas']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Lat'] !== null ? autolinker.link(String(feature.properties['Lat']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Long'] !== null ? autolinker.link(String(feature.properties['Long']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TIPE'] !== null ? autolinker.link(String(feature.properties['TIPE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_FasilitasKeamananDekatLokasiBalapMotorLiar_11_0(feature) {
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 0.000000 && feature.properties['q2wHide_NEAR_DIST'] <= 0.000000 ) {
+                return {
+                pane: 'pane_FasilitasKeamananDekatLokasiBalapMotorLiar_11',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/FasilitasKeamananDekatLokasiBalapMotorLiar_11.svg',
+            iconSize: [38.0, 38.0]
+        }),
+                interactive: true,
+            }
+            }
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 0.000000 && feature.properties['q2wHide_NEAR_DIST'] <= 784.197472 ) {
+                return {
+                pane: 'pane_FasilitasKeamananDekatLokasiBalapMotorLiar_11',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/FasilitasKeamananDekatLokasiBalapMotorLiar_11.svg',
+            iconSize: [30.4, 30.4]
+        }),
+                interactive: true,
+            }
+            }
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 784.197472 && feature.properties['q2wHide_NEAR_DIST'] <= 2337.922710 ) {
+                return {
+                pane: 'pane_FasilitasKeamananDekatLokasiBalapMotorLiar_11',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/FasilitasKeamananDekatLokasiBalapMotorLiar_11.svg',
+            iconSize: [22.799999999999997, 22.799999999999997]
+        }),
+                interactive: true,
+            }
+            }
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 2337.922710 && feature.properties['q2wHide_NEAR_DIST'] <= 4265.124273 ) {
+                return {
+                pane: 'pane_FasilitasKeamananDekatLokasiBalapMotorLiar_11',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/FasilitasKeamananDekatLokasiBalapMotorLiar_11.svg',
+            iconSize: [15.2, 15.2]
+        }),
+                interactive: true,
+            }
+            }
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 4265.124273 && feature.properties['q2wHide_NEAR_DIST'] <= 5637.904943 ) {
+                return {
+                pane: 'pane_FasilitasKeamananDekatLokasiBalapMotorLiar_11',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/FasilitasKeamananDekatLokasiBalapMotorLiar_11.svg',
+            iconSize: [9.5, 9.5]
+        }),
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_FasilitasKeamananDekatLokasiBalapMotorLiar_11');
+        map.getPane('pane_FasilitasKeamananDekatLokasiBalapMotorLiar_11').style.zIndex = 411;
+        map.getPane('pane_FasilitasKeamananDekatLokasiBalapMotorLiar_11').style['mix-blend-mode'] = 'normal';
+        var layer_FasilitasKeamananDekatLokasiBalapMotorLiar_11 = new L.geoJson(json_FasilitasKeamananDekatLokasiBalapMotorLiar_11, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_FasilitasKeamananDekatLokasiBalapMotorLiar_11',
+            layerName: 'layer_FasilitasKeamananDekatLokasiBalapMotorLiar_11',
+            pane: 'pane_FasilitasKeamananDekatLokasiBalapMotorLiar_11',
+            onEachFeature: pop_FasilitasKeamananDekatLokasiBalapMotorLiar_11,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_FasilitasKeamananDekatLokasiBalapMotorLiar_11_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_FasilitasKeamananDekatLokasiBalapMotorLiar_11);
+        map.addLayer(layer_FasilitasKeamananDekatLokasiBalapMotorLiar_11);
+        function pop_FasilitasKesehatanDekatLokasiBalapMotorLiar_12(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Nama_Faske'] !== null ? autolinker.link(String(feature.properties['Nama_Faske']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Lat'] !== null ? autolinker.link(String(feature.properties['Lat']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Long'] !== null ? autolinker.link(String(feature.properties['Long']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['KLASIFIKAS'] !== null ? autolinker.link(String(feature.properties['KLASIFIKAS']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_FasilitasKesehatanDekatLokasiBalapMotorLiar_12_0(feature) {
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 0.000000 && feature.properties['q2wHide_NEAR_DIST'] <= 0.000000 ) {
+                return {
+                pane: 'pane_FasilitasKesehatanDekatLokasiBalapMotorLiar_12',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/FasilitasKesehatanDekatLokasiBalapMotorLiar_12.svg',
+            iconSize: [38.0, 38.0]
+        }),
+                interactive: true,
+            }
+            }
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 0.000000 && feature.properties['q2wHide_NEAR_DIST'] <= 587.167601 ) {
+                return {
+                pane: 'pane_FasilitasKesehatanDekatLokasiBalapMotorLiar_12',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/FasilitasKesehatanDekatLokasiBalapMotorLiar_12.svg',
+            iconSize: [30.4, 30.4]
+        }),
+                interactive: true,
+            }
+            }
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 587.167601 && feature.properties['q2wHide_NEAR_DIST'] <= 1276.033392 ) {
+                return {
+                pane: 'pane_FasilitasKesehatanDekatLokasiBalapMotorLiar_12',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/FasilitasKesehatanDekatLokasiBalapMotorLiar_12.svg',
+            iconSize: [22.799999999999997, 22.799999999999997]
+        }),
+                interactive: true,
+            }
+            }
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 1276.033392 && feature.properties['q2wHide_NEAR_DIST'] <= 1946.156138 ) {
+                return {
+                pane: 'pane_FasilitasKesehatanDekatLokasiBalapMotorLiar_12',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/FasilitasKesehatanDekatLokasiBalapMotorLiar_12.svg',
+            iconSize: [15.2, 15.2]
+        }),
+                interactive: true,
+            }
+            }
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 1946.156138 && feature.properties['q2wHide_NEAR_DIST'] <= 3908.312964 ) {
+                return {
+                pane: 'pane_FasilitasKesehatanDekatLokasiBalapMotorLiar_12',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/FasilitasKesehatanDekatLokasiBalapMotorLiar_12.svg',
+            iconSize: [9.5, 9.5]
+        }),
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_FasilitasKesehatanDekatLokasiBalapMotorLiar_12');
+        map.getPane('pane_FasilitasKesehatanDekatLokasiBalapMotorLiar_12').style.zIndex = 412;
+        map.getPane('pane_FasilitasKesehatanDekatLokasiBalapMotorLiar_12').style['mix-blend-mode'] = 'normal';
+        var layer_FasilitasKesehatanDekatLokasiBalapMotorLiar_12 = new L.geoJson(json_FasilitasKesehatanDekatLokasiBalapMotorLiar_12, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_FasilitasKesehatanDekatLokasiBalapMotorLiar_12',
+            layerName: 'layer_FasilitasKesehatanDekatLokasiBalapMotorLiar_12',
+            pane: 'pane_FasilitasKesehatanDekatLokasiBalapMotorLiar_12',
+            onEachFeature: pop_FasilitasKesehatanDekatLokasiBalapMotorLiar_12,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_FasilitasKesehatanDekatLokasiBalapMotorLiar_12_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_FasilitasKesehatanDekatLokasiBalapMotorLiar_12);
+        map.addLayer(layer_FasilitasKesehatanDekatLokasiBalapMotorLiar_12);
+        function pop_SPBUDekatLokasiBalapMotorLiar_13(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Nama_Pom_B'] !== null ? autolinker.link(String(feature.properties['Nama_Pom_B']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Lat'] !== null ? autolinker.link(String(feature.properties['Lat']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Long'] !== null ? autolinker.link(String(feature.properties['Long']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_SPBUDekatLokasiBalapMotorLiar_13_0(feature) {
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 0.000000 && feature.properties['q2wHide_NEAR_DIST'] <= 116.178069 ) {
+                return {
+                pane: 'pane_SPBUDekatLokasiBalapMotorLiar_13',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/SPBUDekatLokasiBalapMotorLiar_13.svg',
+            iconSize: [38.0, 38.0]
+        }),
+                interactive: true,
+            }
+            }
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 116.178069 && feature.properties['q2wHide_NEAR_DIST'] <= 381.352243 ) {
+                return {
+                pane: 'pane_SPBUDekatLokasiBalapMotorLiar_13',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/SPBUDekatLokasiBalapMotorLiar_13.svg',
+            iconSize: [30.4, 30.4]
+        }),
+                interactive: true,
+            }
+            }
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 381.352243 && feature.properties['q2wHide_NEAR_DIST'] <= 1163.582174 ) {
+                return {
+                pane: 'pane_SPBUDekatLokasiBalapMotorLiar_13',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/SPBUDekatLokasiBalapMotorLiar_13.svg',
+            iconSize: [22.799999999999997, 22.799999999999997]
+        }),
+                interactive: true,
+            }
+            }
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 1163.582174 && feature.properties['q2wHide_NEAR_DIST'] <= 2486.389403 ) {
+                return {
+                pane: 'pane_SPBUDekatLokasiBalapMotorLiar_13',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/SPBUDekatLokasiBalapMotorLiar_13.svg',
+            iconSize: [15.2, 15.2]
+        }),
+                interactive: true,
+            }
+            }
+            if (feature.properties['q2wHide_NEAR_DIST'] >= 2486.389403 && feature.properties['q2wHide_NEAR_DIST'] <= 3996.133719 ) {
+                return {
+                pane: 'pane_SPBUDekatLokasiBalapMotorLiar_13',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/SPBUDekatLokasiBalapMotorLiar_13.svg',
+            iconSize: [9.5, 9.5]
+        }),
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_SPBUDekatLokasiBalapMotorLiar_13');
+        map.getPane('pane_SPBUDekatLokasiBalapMotorLiar_13').style.zIndex = 413;
+        map.getPane('pane_SPBUDekatLokasiBalapMotorLiar_13').style['mix-blend-mode'] = 'normal';
+        var layer_SPBUDekatLokasiBalapMotorLiar_13 = new L.geoJson(json_SPBUDekatLokasiBalapMotorLiar_13, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_SPBUDekatLokasiBalapMotorLiar_13',
+            layerName: 'layer_SPBUDekatLokasiBalapMotorLiar_13',
+            pane: 'pane_SPBUDekatLokasiBalapMotorLiar_13',
+            onEachFeature: pop_SPBUDekatLokasiBalapMotorLiar_13,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_SPBUDekatLokasiBalapMotorLiar_13_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_SPBUDekatLokasiBalapMotorLiar_13);
+        map.addLayer(layer_SPBUDekatLokasiBalapMotorLiar_13);
+        function pop_LokasiBalapMotorLiardiKabupatenSidoarjo_14(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Lokasi'] !== null ? autolinker.link(String(feature.properties['Lokasi']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['lat'] !== null ? autolinker.link(String(feature.properties['lat']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Long'] !== null ? autolinker.link(String(feature.properties['Long']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_LokasiBalapMotorLiardiKabupatenSidoarjo_14_0() {
+            return {
+                pane: 'pane_LokasiBalapMotorLiardiKabupatenSidoarjo_14',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/LokasiBalapMotorLiardiKabupatenSidoarjo_14.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_LokasiBalapMotorLiardiKabupatenSidoarjo_14');
+        map.getPane('pane_LokasiBalapMotorLiardiKabupatenSidoarjo_14').style.zIndex = 414;
+        map.getPane('pane_LokasiBalapMotorLiardiKabupatenSidoarjo_14').style['mix-blend-mode'] = 'normal';
+        var layer_LokasiBalapMotorLiardiKabupatenSidoarjo_14 = new L.geoJson(json_LokasiBalapMotorLiardiKabupatenSidoarjo_14, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_LokasiBalapMotorLiardiKabupatenSidoarjo_14',
+            layerName: 'layer_LokasiBalapMotorLiardiKabupatenSidoarjo_14',
+            pane: 'pane_LokasiBalapMotorLiardiKabupatenSidoarjo_14',
+            onEachFeature: pop_LokasiBalapMotorLiardiKabupatenSidoarjo_14,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_LokasiBalapMotorLiardiKabupatenSidoarjo_14_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_LokasiBalapMotorLiardiKabupatenSidoarjo_14);
+        map.addLayer(layer_LokasiBalapMotorLiardiKabupatenSidoarjo_14);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var overlaysTree = [
+            {label: '<img src="legend/LokasiBalapMotorLiardiKabupatenSidoarjo_14.png" /> Lokasi Balap Motor Liar di Kabupaten Sidoarjo', layer: layer_LokasiBalapMotorLiardiKabupatenSidoarjo_14},
+            {label: 'SPBU Dekat Lokasi Balap Motor Liar<br /><table><tr><td style="text-align: center;"><img src="legend/SPBUDekatLokasiBalapMotorLiar_13_SPBUPalingDekat0.png" /></td><td>SPBU Paling Dekat</td></tr><tr><td style="text-align: center;"><img src="legend/SPBUDekatLokasiBalapMotorLiar_13_SPBUJarakDekat1.png" /></td><td>SPBU Jarak Dekat</td></tr><tr><td style="text-align: center;"><img src="legend/SPBUDekatLokasiBalapMotorLiar_13_SPBUJarakSedang2.png" /></td><td>SPBU Jarak Sedang</td></tr><tr><td style="text-align: center;"><img src="legend/SPBUDekatLokasiBalapMotorLiar_13_SPBUJarakJauh3.png" /></td><td>SPBU Jarak Jauh</td></tr><tr><td style="text-align: center;"><img src="legend/SPBUDekatLokasiBalapMotorLiar_13_SPBUPalingJauh4.png" /></td><td>SPBU Paling Jauh</td></tr></table>', layer: layer_SPBUDekatLokasiBalapMotorLiar_13},
+            {label: 'Fasilitas Kesehatan Dekat Lokasi Balap Motor Liar<br /><table><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatanDekatLokasiBalapMotorLiar_12_FasilitasKesehatanPalingDekat0.png" /></td><td>Fasilitas Kesehatan Paling Dekat</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatanDekatLokasiBalapMotorLiar_12_FasilitasKesehatanJarakDekat1.png" /></td><td>Fasilitas Kesehatan Jarak Dekat</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatanDekatLokasiBalapMotorLiar_12_FasilitasKesehatanJarakSedang2.png" /></td><td>Fasilitas Kesehatan Jarak Sedang</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatanDekatLokasiBalapMotorLiar_12_FasilitasKesehatanJarakJauh3.png" /></td><td>Fasilitas Kesehatan Jarak Jauh</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatanDekatLokasiBalapMotorLiar_12_FasilitasKesehatanPalingJauh4.png" /></td><td>Fasilitas Kesehatan Paling Jauh</td></tr></table>', layer: layer_FasilitasKesehatanDekatLokasiBalapMotorLiar_12},
+            {label: 'Fasilitas Keamanan Dekat Lokasi Balap Motor Liar<br /><table><tr><td style="text-align: center;"><img src="legend/FasilitasKeamananDekatLokasiBalapMotorLiar_11_FasilitasKeamananPalingDekat0.png" /></td><td>Fasilitas Keamanan Paling Dekat</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKeamananDekatLokasiBalapMotorLiar_11_FasilitasKeamananJarakDekat1.png" /></td><td>Fasilitas Keamanan Jarak Dekat</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKeamananDekatLokasiBalapMotorLiar_11_FasilitasKeamananJarakSedang2.png" /></td><td>Fasilitas Keamanan Jarak Sedang</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKeamananDekatLokasiBalapMotorLiar_11_FasilitasKeamananJarakJauh3.png" /></td><td>Fasilitas Keamanan Jarak Jauh</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKeamananDekatLokasiBalapMotorLiar_11_FasilitasKeamananPalingJauh4.png" /></td><td>Fasilitas Keamanan Paling Jauh</td></tr></table>', layer: layer_FasilitasKeamananDekatLokasiBalapMotorLiar_11},
+            {label: 'Fasilitas Pendidikan Dekat Lokasi Balap Motor Liar<br /><table><tr><td style="text-align: center;"><img src="legend/FasilitasPendidikanDekatLokasiBalapMotorLiar_10_FasilitasPendidikanPalingDekat0.png" /></td><td>Fasilitas Pendidikan Paling Dekat </td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasPendidikanDekatLokasiBalapMotorLiar_10_FasilitasPendidikanJarakDekat1.png" /></td><td>Fasilitas Pendidikan Jarak Dekat</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasPendidikanDekatLokasiBalapMotorLiar_10_FasilitasPendidikanJarakSedang2.png" /></td><td>Fasilitas Pendidikan Jarak Sedang</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasPendidikanDekatLokasiBalapMotorLiar_10_FasilitasPendidikanJarakJauh3.png" /></td><td>Fasilitas Pendidikan Jarak Jauh</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasPendidikanDekatLokasiBalapMotorLiar_10_FasilitasPendidikanPalingJauh4.png" /></td><td>Fasilitas Pendidikan Paling Jauh</td></tr></table>', layer: layer_FasilitasPendidikanDekatLokasiBalapMotorLiar_10},
+            {label: '<img src="legend/DaftarSPBUdiKabupatenSidoarjo_9.png" /> Daftar SPBU di Kabupaten Sidoarjo', layer: layer_DaftarSPBUdiKabupatenSidoarjo_9},
+            {label: '<img src="legend/DaftarFasilitasKesehatandiKabupatenSidoarjo_8.png" /> Daftar Fasilitas Kesehatan di Kabupaten Sidoarjo', layer: layer_DaftarFasilitasKesehatandiKabupatenSidoarjo_8},
+            {label: '<img src="legend/DaftarFasilitasPendidikandiKabupatenSidoarjo_7.png" /> Daftar Fasilitas Pendidikan di Kabupaten Sidoarjo', layer: layer_DaftarFasilitasPendidikandiKabupatenSidoarjo_7},
+            {label: '<img src="legend/DaftarFasilitasKeamanandiKabupatenSidoarjo_6.png" /> Daftar Fasilitas Keamanan di Kabupaten Sidoarjo', layer: layer_DaftarFasilitasKeamanandiKabupatenSidoarjo_6},
+            {label: 'Hotspot Tingkat Kerawanan Balap Motor Liar<br /><table><tr><td style="text-align: center;"><img src="legend/HotspotTingkatKerawananBalapMotorLiar_5_BerpotensiPalingRendah0.png" /></td><td>Berpotensi Paling Rendah</td></tr><tr><td style="text-align: center;"><img src="legend/HotspotTingkatKerawananBalapMotorLiar_5_BerpotensiRendah1.png" /></td><td>Berpotensi Rendah</td></tr><tr><td style="text-align: center;"><img src="legend/HotspotTingkatKerawananBalapMotorLiar_5_BerpotensiSedang2.png" /></td><td>Berpotensi Sedang</td></tr><tr><td style="text-align: center;"><img src="legend/HotspotTingkatKerawananBalapMotorLiar_5_BerpotensiTinggi3.png" /></td><td>Berpotensi Tinggi</td></tr><tr><td style="text-align: center;"><img src="legend/HotspotTingkatKerawananBalapMotorLiar_5_BerpotensiSangatTinggi4.png" /></td><td>Berpotensi Sangat Tinggi</td></tr></table>', layer: layer_HotspotTingkatKerawananBalapMotorLiar_5},
+            {label: 'Aksesibilitas Dari Fasilitas Kesehatan<br /><table><tr><td style="text-align: center;"><img src="legend/AksesibilitasDariFasilitasKesehatan_4_Jangkauannya500meterdariFasilitasKesehatan0.png" /></td><td>Jangkauannya 500 meter dari Fasilitas Kesehatan</td></tr><tr><td style="text-align: center;"><img src="legend/AksesibilitasDariFasilitasKesehatan_4_Jangkauannya1kmdariFasilitasKesehatan1.png" /></td><td>Jangkauannya 1 km dari Fasilitas Kesehatan</td></tr><tr><td style="text-align: center;"><img src="legend/AksesibilitasDariFasilitasKesehatan_4_Jangkauannya15kmmeterdariFasilitasKesehatan2.png" /></td><td>Jangkauannya 1.5 km meter dari Fasilitas Kesehatan</td></tr><tr><td style="text-align: center;"><img src="legend/AksesibilitasDariFasilitasKesehatan_4_Jangkauannya2kmmeterdariFasilitasKesehatan3.png" /></td><td>Jangkauannya 2 km meter dari Fasilitas Kesehatan</td></tr></table>', layer: layer_AksesibilitasDariFasilitasKesehatan_4},
+            {label: '<img src="legend/jalan_lokal_3.png" /> jalan_lokal', layer: layer_jalan_lokal_3},
+            {label: '<img src="legend/UTM_JALAN_2.png" /> UTM_JALAN', layer: layer_UTM_JALAN_2},
+            {label: '<img src="legend/BatasKecamatanSidoarjo_1.png" /> Batas Kecamatan Sidoarjo', layer: layer_BatasKecamatanSidoarjo_1},
+            {label: "Google Road", layer: layer_GoogleRoad_0, radioGroup: 'bm' },]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: false, 
+        });
+        lay.addTo(map);
+		document.addEventListener("DOMContentLoaded", function() {
+            // set new Layers List height which considers toggle icon
+            function newLayersListHeight() {
+                var layerScrollbarElement = document.querySelector('.leaflet-control-layers-scrollbar');
+                if (layerScrollbarElement) {
+                    var layersListElement = document.querySelector('.leaflet-control-layers-list');
+                    var originalHeight = layersListElement.style.height 
+                        || window.getComputedStyle(layersListElement).height;
+                    var newHeight = parseFloat(originalHeight) - 50;
+                    layersListElement.style.height = newHeight + 'px';
+                }
+            }
+            var isLayersListExpanded = true;
+            var controlLayersElement = document.querySelector('.leaflet-control-layers');
+            var toggleLayerControl = document.querySelector('.leaflet-control-layers-toggle');
+            // toggle Collapsed/Expanded and apply new Layers List height
+            toggleLayerControl.addEventListener('click', function() {
+                if (isLayersListExpanded) {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                } else {
+                    controlLayersElement.classList.add('leaflet-control-layers-expanded');
+                }
+                isLayersListExpanded = !isLayersListExpanded;
+                newLayersListHeight()
+            });	
+			// apply new Layers List height if toggle layerstree
+			if (controlLayersElement) {
+				controlLayersElement.addEventListener('click', function(event) {
+					var toggleLayerHeaderPointer = event.target.closest('.leaflet-layerstree-header-pointer span');
+					if (toggleLayerHeaderPointer) {
+						newLayersListHeight();
+					}
+				});
+			}
+            // Collapsed/Expanded at Start to apply new height
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            // Collapsed touch/small screen
+            var isSmallScreen = window.innerWidth < 650;
+            if (isSmallScreen) {
+                setTimeout(function() {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                    isLayersListExpanded = !isLayersListExpanded;
+                }, 500);
+            }  
+        });       
+        setBounds();
+        var i = 0;
+        layer_DaftarFasilitasKeamanandiKabupatenSidoarjo_6.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Fasilitas'] !== null?String('<div style="color: #323232; font-size: 7pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['Fasilitas']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_DaftarFasilitasKeamanandiKabupatenSidoarjo_6'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_DaftarFasilitasPendidikandiKabupatenSidoarjo_7.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Fasilitas'] !== null?String('<div style="color: #323232; font-size: 7pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['Fasilitas']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_DaftarFasilitasPendidikandiKabupatenSidoarjo_7'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_DaftarFasilitasKesehatandiKabupatenSidoarjo_8.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Nama Faske'] !== null?String('<div style="color: #323232; font-size: 7pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['Nama Faske']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_DaftarFasilitasKesehatandiKabupatenSidoarjo_8'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_DaftarSPBUdiKabupatenSidoarjo_9.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Nama Pom B'] !== null?String('<div style="color: #323232; font-size: 7pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['Nama Pom B']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_DaftarSPBUdiKabupatenSidoarjo_9'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_FasilitasPendidikanDekatLokasiBalapMotorLiar_10.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Fasilitas'] !== null?String('<div style="color: #323232; font-size: 7pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['Fasilitas']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_FasilitasPendidikanDekatLokasiBalapMotorLiar_10'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_FasilitasKeamananDekatLokasiBalapMotorLiar_11.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Fasilitas'] !== null?String('<div style="color: #323232; font-size: 7pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['Fasilitas']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_FasilitasKeamananDekatLokasiBalapMotorLiar_11'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_FasilitasKesehatanDekatLokasiBalapMotorLiar_12.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Nama_Faske'] !== null?String('<div style="color: #323232; font-size: 7pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['Nama_Faske']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_FasilitasKesehatanDekatLokasiBalapMotorLiar_12'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_SPBUDekatLokasiBalapMotorLiar_13.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Nama_Pom_B'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['Nama_Pom_B']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_SPBUDekatLokasiBalapMotorLiar_13'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_LokasiBalapMotorLiardiKabupatenSidoarjo_14.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Lokasi'] !== null?String('<div style="color: #323232; font-size: 7pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['Lokasi']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_LokasiBalapMotorLiardiKabupatenSidoarjo_14'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        resetLabels([layer_HotspotTingkatKerawananBalapMotorLiar_5,layer_DaftarFasilitasKeamanandiKabupatenSidoarjo_6,layer_DaftarFasilitasPendidikandiKabupatenSidoarjo_7,layer_DaftarFasilitasKesehatandiKabupatenSidoarjo_8,layer_DaftarSPBUdiKabupatenSidoarjo_9,layer_FasilitasPendidikanDekatLokasiBalapMotorLiar_10,layer_FasilitasKeamananDekatLokasiBalapMotorLiar_11,layer_FasilitasKesehatanDekatLokasiBalapMotorLiar_12,layer_SPBUDekatLokasiBalapMotorLiar_13,layer_LokasiBalapMotorLiardiKabupatenSidoarjo_14]);
+        map.on("zoomend", function(){
+            resetLabels([layer_HotspotTingkatKerawananBalapMotorLiar_5,layer_DaftarFasilitasKeamanandiKabupatenSidoarjo_6,layer_DaftarFasilitasPendidikandiKabupatenSidoarjo_7,layer_DaftarFasilitasKesehatandiKabupatenSidoarjo_8,layer_DaftarSPBUdiKabupatenSidoarjo_9,layer_FasilitasPendidikanDekatLokasiBalapMotorLiar_10,layer_FasilitasKeamananDekatLokasiBalapMotorLiar_11,layer_FasilitasKesehatanDekatLokasiBalapMotorLiar_12,layer_SPBUDekatLokasiBalapMotorLiar_13,layer_LokasiBalapMotorLiardiKabupatenSidoarjo_14]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_HotspotTingkatKerawananBalapMotorLiar_5,layer_DaftarFasilitasKeamanandiKabupatenSidoarjo_6,layer_DaftarFasilitasPendidikandiKabupatenSidoarjo_7,layer_DaftarFasilitasKesehatandiKabupatenSidoarjo_8,layer_DaftarSPBUdiKabupatenSidoarjo_9,layer_FasilitasPendidikanDekatLokasiBalapMotorLiar_10,layer_FasilitasKeamananDekatLokasiBalapMotorLiar_11,layer_FasilitasKesehatanDekatLokasiBalapMotorLiar_12,layer_SPBUDekatLokasiBalapMotorLiar_13,layer_LokasiBalapMotorLiardiKabupatenSidoarjo_14]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_HotspotTingkatKerawananBalapMotorLiar_5,layer_DaftarFasilitasKeamanandiKabupatenSidoarjo_6,layer_DaftarFasilitasPendidikandiKabupatenSidoarjo_7,layer_DaftarFasilitasKesehatandiKabupatenSidoarjo_8,layer_DaftarSPBUdiKabupatenSidoarjo_9,layer_FasilitasPendidikanDekatLokasiBalapMotorLiar_10,layer_FasilitasKeamananDekatLokasiBalapMotorLiar_11,layer_FasilitasKesehatanDekatLokasiBalapMotorLiar_12,layer_SPBUDekatLokasiBalapMotorLiar_13,layer_LokasiBalapMotorLiardiKabupatenSidoarjo_14]);
+        });
+        </script>
+    </body>
+</html>
